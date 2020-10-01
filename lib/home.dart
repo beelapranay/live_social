@@ -9,6 +9,7 @@ import 'package:project_x3/upload.dart';
 import 'package:project_x3/user_profile.dart';
 import 'package:project_x3/users.dart';
 import 'auth.dart';
+import 'package:project_x3/Services/confess.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -144,8 +145,8 @@ class _HomePageState extends State<HomePage> {
                           scrollDirection: Axis.horizontal,
                           children: <Widget>[
                             OutlineButton(
-                              borderSide: BorderSide(color: Colors.white),
-                              highlightedBorderColor: Colors.white,
+                              borderSide: BorderSide(color: Colors.red),
+                              highlightedBorderColor: Colors.red,
                               onPressed: (){
                                 Navigator.push(
                                   context,
@@ -164,8 +165,8 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(width: 10,),
 
                             OutlineButton(
-                              borderSide: BorderSide(color: Colors.white),
-                              highlightedBorderColor: Colors.white,
+                              borderSide: BorderSide(color: Colors.red),
+                              highlightedBorderColor: Colors.red,
                               onPressed: (){},
                               //height: 30,
                               child: Row(
@@ -180,9 +181,14 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(width: 10,),
 
                             OutlineButton(
-                              borderSide: BorderSide(color: Colors.white),
-                              highlightedBorderColor: Colors.white,
-                              onPressed: (){},
+                              borderSide: BorderSide(color: Colors.red),
+                              highlightedBorderColor: Colors.red,
+                              onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Confess()));
+                              },
                               //height: 30,
                               child: Row(
                                 children: <Widget>[
@@ -196,8 +202,8 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(width: 10,),
 
                             OutlineButton(
-                              borderSide: BorderSide(color: Colors.white),
-                              highlightedBorderColor: Colors.white,
+                              borderSide: BorderSide(color: Colors.red),
+                              highlightedBorderColor: Colors.red,
                               onPressed: (){
                                 Navigator.push(
                                     context,

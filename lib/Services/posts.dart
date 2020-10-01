@@ -42,7 +42,7 @@ class _PostsState extends State<Posts> {
             floatingActionButton: FloatingActionButton(
               backgroundColor: Colors.red,
               onPressed: (){Navigator.push(context,MaterialPageRoute(builder: (context) => Upload()));},
-              child: Icon(Icons.add),
+              child: Icon(Icons.add,color: Colors.white,),
             ),
             appBar: AppBar(
               leading: IconButton(icon: Icon(Icons.arrow_back),onPressed: (){Navigator.pop(context);},),
