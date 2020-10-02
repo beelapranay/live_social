@@ -15,15 +15,23 @@ class FirstView extends StatelessWidget {
       body: Container(
         width: _width,
         height: _height,
-        decoration: BoxDecoration(gradient: LinearGradient(colors: [Hexcolor('#222222'),Hexcolor('#666666')])),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Hexcolor('#666666'),
+                  Hexcolor('#222222')
+                ]
+            ),
+        ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
                 SizedBox(height: _height * 0.10),
-                Text(
-                  "SRET Social",
+                Text("SRET Social",
                   style: GoogleFonts.montserrat(fontSize: 40),
                 ),
                 SizedBox(height: _height * 0.10),

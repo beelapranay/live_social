@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_x3/uploaddp.dart';
@@ -134,54 +135,65 @@ class _ProfileViewState extends State<ProfileView> {
 
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              child: url == null ? OutlineButton(
-                borderSide: BorderSide(color: Colors.red),
-                  highlightedBorderColor: Colors.red,
-                  child: Text('Upload DP',style: GoogleFonts.montserrat(fontSize: 18),),onPressed: (){
-            Navigator.push(context,MaterialPageRoute(builder: (context) => UploadDP()));})
-              : Container(
-                height: 120,width: 120,
-                decoration: BoxDecoration(shape: BoxShape.circle,
-                    border: Border.all(width: 2,color: Colors.red),
-                    image: DecorationImage(image: NetworkImage(url),
-                        fit: BoxFit.cover)
-                ),
-              )
-          )
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+                child: url == null ? OutlineButton(
+                  borderSide: BorderSide(color: Colors.red),
+                    highlightedBorderColor: Colors.red,
+                    child: Text('Upload DP',style: GoogleFonts.montserrat(fontSize: 18),),onPressed: (){
+              Navigator.push(context,MaterialPageRoute(builder: (context) => UploadDP()));})
+                : Container(
+                  height: 120,width: 120,
+                  decoration: BoxDecoration(shape: BoxShape.circle,
+                      border: Border.all(width: 2,color: Colors.red),
+                      image: DecorationImage(image: NetworkImage(url),
+                          fit: BoxFit.cover)
+                  ),
+                )
+            )
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            "Name: ${authData.displayName ?? ''}",
+            "${authData.displayName ?? ''}",
             style: GoogleFonts.montserrat(fontSize: 20),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: AutoSizeText(
-            "E-Mail: ${authData.email ?? ''}",
+            "${authData.email ?? ''}",
             minFontSize: 16,
             style: GoogleFonts.montserrat(fontSize: 20),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Member from: ${DateFormat('dd/MM/yyyy').format(authData.metadata.creationTime).toString()}",
-            style: GoogleFonts.montserrat(fontSize: 20),
+        Center(
+          child: RaisedButton(
+            color: Colors.red,
+            child: Text("Edit Profile",style: GoogleFonts.montserrat(fontSize: 18),),
+            onPressed: () {
+              _userEditBottomSheet(context);
+            },
           ),
         ),
-        RaisedButton(
-          color: Colors.red,
-          child: Text("Edit Profile",style: GoogleFonts.montserrat(fontSize: 18),),
-          onPressed: () {
-            _userEditBottomSheet(context);
-          },
+        Center(
+          child: Row(
+            children: <Widget>[
+              Text("Member from: ",
+                style: GoogleFonts.montserrat(fontSize: 20,color: Colors.red),
+              ),
+              Text(
+                "${DateFormat('dd/MM/yyyy').format(authData.metadata.creationTime).toString()}",
+                style: GoogleFonts.montserrat(fontSize: 20),
+              ),
+            ],
+          ),
         ),
       ],
     );

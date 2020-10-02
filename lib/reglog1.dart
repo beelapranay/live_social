@@ -82,15 +82,16 @@ class _SignUpViewState extends State<SignUpView> {
             break;
           case AuthFormType.signUp:
             await auth.createUserWithEmailAndPassword(_email.trim(), _password, _name);
-            FirebaseFirestore.instance
-                .collection('Users')
-                .add({
+            final String id = FirebaseAuth.instance.currentUser.uid;
+            FirebaseFirestore.instance.collection('Users').doc(id).set({
+              'id' : id,
               'name': _name,
               'email': _email,
               'timestamp': DateTime.now(),
-                });
+            });
             final String name = FirebaseAuth.instance.currentUser.displayName;
             print(name);
+            print(id);
             Navigator.of(context).pushReplacementNamed('/home');
             break;
           case AuthFormType.reset:

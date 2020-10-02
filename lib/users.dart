@@ -61,30 +61,31 @@ class _UsersPageState extends State<UsersPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-
-              Row(children: <Widget>[
-                Container(
-                  height: 60,width: 60,
-                  decoration: BoxDecoration(shape: BoxShape.circle,
-                      border: Border.all(width: 2,color: Colors.red),
-                      image: userUrl == null ? DecorationImage(image: AssetImage('assets/user.png'),fit: BoxFit.cover)
-                          : DecorationImage(image: NetworkImage(userUrl),
-                          fit: BoxFit.cover)
-                  ),
-                ),
-                SizedBox(width: 10,),
-                AutoSizeText('${user.data()['name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
-                SizedBox(width: 100,),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlineButton(
-                    onPressed: (){},
-                    borderSide: BorderSide(color: Colors.red),
-                    highlightedBorderColor: Colors.red,
-                    child: Text('Listen',style: GoogleFonts.montserrat(color: Colors.red),),
-                  ),
-                ),
-              ]
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                      height: 60,width: 60,
+                      decoration: BoxDecoration(shape: BoxShape.circle,
+                          border: Border.all(width: 2,color: Colors.red),
+                          image: userUrl == null ? DecorationImage(image: AssetImage('assets/user.png'),fit: BoxFit.cover)
+                              : DecorationImage(image: NetworkImage(userUrl),
+                              fit: BoxFit.cover)
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                    AutoSizeText('${user.data()['name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                    SizedBox(width: 100),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: OutlineButton(
+                        onPressed: (){},
+                        borderSide: BorderSide(color: Colors.red),
+                        highlightedBorderColor: Colors.red,
+                        child: Text('Listen',style: GoogleFonts.montserrat(color: Colors.red),),
+                      ),
+                    ),
+                  ]
               ),
             ],
           ),
