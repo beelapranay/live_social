@@ -216,7 +216,6 @@ class _PostsState extends State<Posts> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-
               Row(children: <Widget>[
                 Container(
                   height: 60,width: 60,
@@ -229,11 +228,9 @@ class _PostsState extends State<Posts> {
                 ),
                 SizedBox(width: 10,),
                 AutoSizeText('${Order.data()['Name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
-
               ]
               ),
               SizedBox(height: 10,),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Container(

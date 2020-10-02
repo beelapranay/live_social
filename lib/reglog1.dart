@@ -54,9 +54,6 @@ class _SignUpViewState extends State<SignUpView> {
 
   bool validate() {
     final form = formKey.currentState;
-//    if (authFormType == AuthFormType.anonymous) {
-//      return true;
-//    }
     form.save();
     if (form.validate()) {
       form.save();
