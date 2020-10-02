@@ -51,7 +51,6 @@ class _UploadDPState extends State<UploadDP> {
             title: Container(
                 decoration: BoxDecoration(border: Border.all(color: Colors.green),borderRadius: BorderRadius.circular(5)),
                 child: Center(
-
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Upload Post',style: GoogleFonts.montserrat(fontSize: 20)
@@ -68,10 +67,6 @@ class _UploadDPState extends State<UploadDP> {
                 child: Center(child: Text('Upload using Gallery',style: GoogleFonts.montserrat(fontSize: 18))),
                 onPressed: galleryphoto,
               ),
-//              SimpleDialogOption(
-//                child: Center(child: Text('Skip Photo',style: GoogleFonts.montserrat(fontSize: 18))),
-//                onPressed: (){Navigator.push(context,MaterialPageRoute(builder: (context) => AddaPost()));},
-//              ),
               SimpleDialogOption(
                 child: Center(child: Text('Cancel',style: GoogleFonts.montserrat(fontSize: 18,color: Colors.red))),
                 onPressed: (){
@@ -149,31 +144,6 @@ class _UploadDPState extends State<UploadDP> {
     final compressedimage = File('$path/img_$postid.jpg')..writeAsBytesSync(im.encodeJpg(imagefile,quality: 60));
     setState(() {
       file = compressedimage;
-    });
-  }
-
-  postintofirestore(String mediaurl, String caption){
-    FirebaseFirestore.instance
-        .collection('Posts')
-        .add({
-      'Name': dispname,
-      'image' : mediaurl,
-      'Caption': caption,
-      'E-Mail': email,
-      'Timestamp': DateTime.now(),
-      //'image': imgurl
-    });
-
-    FirebaseFirestore.instance
-        .collection('UserPosts')
-        .doc(email)
-        .collection('Data')
-        .add({
-      'Name': 'You',
-      'Caption': caption,
-      'E-Mail': email,
-      'Timestamp': DateTime.now(),
-      'image': mediaurl
     });
   }
 

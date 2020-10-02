@@ -68,6 +68,7 @@ flutter:
     - assets/upload.jpg
     - assets/t.png
     - assets/user.png
+    - assets/noim.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
