@@ -100,10 +100,10 @@ class _ConfessState extends State<Confess> {
                       child: confession==null ? null : ReadMoreText(
                         confession,style: GoogleFonts.anonymousPro(fontWeight: FontWeight.w300,fontSize: 16),
                         trimLines: 2,
-                        colorClickableText: Colors.white,
+                        colorClickableText: Colors.red,
                         trimMode: TrimMode.Line,
                         trimCollapsedText: '...Read more',
-                        trimExpandedText: ' Read less...',
+                        trimExpandedText: '...Read less',
                       ),
                     ),
                     decoration: BoxDecoration(
