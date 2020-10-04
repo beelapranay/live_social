@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project_x3/chatscreen.dart';
 import 'Services/posts.dart';
 
 class UsersPage extends StatefulWidget {
@@ -53,6 +54,9 @@ class _UsersPageState extends State<UsersPage> {
     String url = user.data()['image'];
     String caption = user.data()['Caption'];
     String userUrl = user.data()['url'];
+    String name = user.data()['name'];
+    String myname = FirebaseAuth.instance.currentUser.displayName;
+    String docname = name+'_'+myname;
 
     return new Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
@@ -62,7 +66,7 @@ class _UsersPageState extends State<UsersPage> {
           child: Column(
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
                       height: 60,width: 60,
@@ -73,13 +77,23 @@ class _UsersPageState extends State<UsersPage> {
                               fit: BoxFit.cover)
                       ),
                     ),
-                    SizedBox(width: 10,),
-                    AutoSizeText('${user.data()['name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                    SizedBox(width: 0,),
+                    AutoSizeText(name,style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
                     SizedBox(width: 100),
                     Align(
                       alignment: Alignment.centerRight,
                       child: OutlineButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                  ChatScreen(name1: name,)));
+                          FirebaseFirestore.instance.collection('chats')
+                          .doc(docname).set({
+                            'created': DateTime.now()
+                          });
+                        },
                         borderSide: BorderSide(color: Colors.red),
                         highlightedBorderColor: Colors.red,
                         child: Text('Listen',style: GoogleFonts.montserrat(color: Colors.red),),
