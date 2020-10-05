@@ -85,6 +85,7 @@ class _SignUpViewState extends State<SignUpView> {
               'name': _name,
               'email': _email,
               'timestamp': DateTime.now(),
+              'url': null
             });
             final String name = FirebaseAuth.instance.currentUser.displayName;
             print(name);

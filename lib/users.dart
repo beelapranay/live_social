@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_x3/chatscreen.dart';
+import 'Services/conversationscreen.dart';
 import 'Services/posts.dart';
 
 class UsersPage extends StatefulWidget {
@@ -57,6 +57,30 @@ class _UsersPageState extends State<UsersPage> {
     String name = user.data()['name'];
     String myname = FirebaseAuth.instance.currentUser.displayName;
     String docname = name+'_'+myname;
+    sendMessage(String userName){
+      List<String> users = [myname,userName];
+
+      String chatRoomId = docname;
+
+      Map<String, dynamic> chatRoom = {
+        "users": users,
+        "chatRoomId" : chatRoomId,
+      };
+
+      myname==name ? null : FirebaseFirestore.instance
+          .collection("chatRoom")
+          .doc(chatRoomId)
+          .set(chatRoom)
+          .catchError((e) {
+        print(e);
+      });
+
+      myname==name ? print("Not Possible!!") : Navigator.push(context, MaterialPageRoute(
+          builder: (context) => ConversationScreen(
+            chatRoomId: chatRoomId,name: name
+          )
+      ));
+    }
 
     return new Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
@@ -84,15 +108,7 @@ class _UsersPageState extends State<UsersPage> {
                       alignment: Alignment.centerRight,
                       child: OutlineButton(
                         onPressed: (){
-                          Navigator.push(
-                              context,
-                              new MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  ChatScreen(name1: name,)));
-                          FirebaseFirestore.instance.collection('chats')
-                          .doc(docname).set({
-                            'created': DateTime.now()
-                          });
+                          sendMessage(name);
                         },
                         borderSide: BorderSide(color: Colors.red),
                         highlightedBorderColor: Colors.red,
@@ -107,6 +123,8 @@ class _UsersPageState extends State<UsersPage> {
       ),
     );
   }
+
+
 
 }
 

@@ -3,6 +3,7 @@ import 'package:clay_containers/widgets/clay_containers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:project_x3/Services/chats.dart';
 import 'package:project_x3/Services/posts.dart';
 import 'package:project_x3/provider_widget.dart';
 import 'package:project_x3/upload.dart';
@@ -195,6 +196,27 @@ class _HomePageState extends State<HomePage> {
                                   Text('Confess',style: GoogleFonts.montserrat(fontSize: 14),),
                                   SizedBox(width: 5,),
                                   Icon(Icons.hearing,size: 18,),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(width: 10,),
+
+                            OutlineButton(
+                              borderSide: BorderSide(color: Colors.red),
+                              highlightedBorderColor: Colors.red,
+                              onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatRoom()));
+                              },
+                              //height: 30,
+                              child: Row(
+                                children: <Widget>[
+                                  Text('Chats',style: GoogleFonts.montserrat(fontSize: 14),),
+                                  SizedBox(width: 5,),
+                                  Icon(Icons.chat,size: 18,),
                                 ],
                               ),
                             ),
