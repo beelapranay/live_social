@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -18,18 +21,23 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Stream<QuerySnapshot> chats;
   String name = FirebaseAuth.instance.currentUser.displayName;
   TextEditingController messageEditingController = new TextEditingController();
+  final _controller = ScrollController();
+
+
 
   Widget chatMessages(){
     return StreamBuilder(
       stream: chats,
       builder: (context, snapshot){
         return snapshot.hasData ?  ListView.builder(
+          controller: _controller,
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index){
               return MessageTile(
                 message: snapshot.data.documents[index].data()["message"],
                 sendByMe: name == snapshot.data.documents[index].data()["sendBy"],
-              );
+              )
+              ;
             }) : Container();
       },
     );
@@ -87,61 +95,81 @@ class _ConversationScreenState extends State<ConversationScreen> {
         title: Text(widget.name,style: GoogleFonts.montserrat(fontSize: 20),),
         backgroundColor: Colors.red,
       ),
-      body: Container(
-        child: Stack(
-          children: [
-            Container(child: chatMessages(),height: MediaQuery.of(context).size.height*0.77,),
-            SizedBox(height: 50,),
-            Container(alignment: Alignment.bottomCenter,
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                //color: Color(0x54FFFFFF),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                          child: TextField(
-                            controller: messageEditingController,
-                            style: GoogleFonts.montserrat(),
-                            cursorColor: Colors.red,
-                            decoration: InputDecoration(
-                                hintText: "Message...",
-                                hintStyle: TextStyle(
-                                  //color: Colors.white,
-                                  fontSize: 16,
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              Container(child: chatMessages(),height: MediaQuery.of(context).size.height*0.77,),
+              //SizedBox(height: 50,),
+              Container(
+                //height: 70,
+                padding: EdgeInsets.all(5),
+//                decoration: BoxDecoration(
+//                  border: Border.all(color: Colors.red)
+//                ),
+                alignment: Alignment.bottomCenter,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  //color: Color(0x54FFFFFF),
+                  child: Row(
+                    children: [
+//                      Expanded(
+//                          child:
+                  SizedBox(
+                    child: Container(
+                              child: TextField(
+                                onTap: (){
+                                  Timer(
+                                    Duration(seconds: 0),
+                                        () => _controller.jumpTo(_controller.position.maxScrollExtent),
+                                  );
+                                },
+                                controller: messageEditingController,
+                                style: GoogleFonts.montserrat(),
+                                cursorColor: Colors.red,
+                                decoration: InputDecoration(
+                                    hintText: "Message...",
+                                    hintStyle: TextStyle(
+                                      //color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                    border: InputBorder.none
                                 ),
-                                border: InputBorder.none
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.red),
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                            //)
+                        ),
+                    height: 50,
+                    width: MediaQuery.of(context).size.width*0.7,
+                  ),
+                      SizedBox(width: 16,),
+                      GestureDetector(
+                        onTap: () {
+                          addMessage();
+                        },
+                        child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40)
                             ),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red),
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                        )),
-                    SizedBox(width: 16,),
-                    GestureDetector(
-                      onTap: () {
-                        addMessage();
-                      },
-                      child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40)
-                          ),
-                          padding: EdgeInsets.all(12),
-                          child: Icon(Icons.send)),
-                    ),
-                  ],
+                            padding: EdgeInsets.all(12),
+                            child: Icon(Icons.send)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -155,6 +183,8 @@ class MessageTile extends StatelessWidget {
 
   MessageTile({@required this.message, @required this.sendByMe});
 
+  RegExp exp = new RegExp(r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
+//  Iterable<Match> matches = exp.allMatches(message);
 
   @override
   Widget build(BuildContext context) {
@@ -183,11 +213,27 @@ class MessageTile extends StatelessWidget {
                 bottomRight: Radius.circular(23)),
             color: sendByMe ? Colors.red : Colors.blueGrey,
         ),
-        child: Text(message,
+        child: exp.hasMatch(message) ?
+        GestureDetector(
+          onTap: (){_launchURL(message);},
+          child: Container(
+            child: Text(message,
+              style: GoogleFonts.montserrat(fontSize: 15,color: Colors.white,decoration: TextDecoration.underline),),
+      ),
+        ) : Text(message,
             textAlign: TextAlign.start,
-            style: GoogleFonts.montserrat(fontSize: 15,color: Colors.white)),
+            style: GoogleFonts.montserrat(fontSize: 15,color: Colors.white))
       ),
     );
   }
+
+  _launchURL(message) async {
+    if (await canLaunch(message)) {
+      await launch(message);
+    } else {
+      throw 'Could not launch $message';
+    }
+  }
+
 }
 

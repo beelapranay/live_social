@@ -103,6 +103,9 @@ class _SignUpViewState extends State<SignUpView> {
       } catch (e) {
         setState(() {
           _warning = e.message;
+          setState(() {
+            isload = false;
+          });
         });
       }
     }

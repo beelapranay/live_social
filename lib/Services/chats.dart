@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_x3/sharedpref.dart';
 import 'package:project_x3/sharedprefvalues.dart';
+import 'package:project_x3/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'conversationscreen.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,11 @@ class _ChatRoomState extends State<ChatRoom> {
                 chatRoomId: snapshot.data.documents[index].data()["chatRoomId"],
               );
             })
-            : Container();
+            : Container(
+          child: Center(
+            child: Text('Loading',style: GoogleFonts.montserrat(fontSize: 18),),
+          ),
+        );
       },
     );
   }
@@ -67,6 +72,16 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+//          Navigator.push(
+//              context,
+//              MaterialPageRoute(
+//                  builder: (context) => UsersPage()));
+        },
+        backgroundColor: Colors.red,
+        child: Icon(Icons.chat,color: Colors.white,),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.red,
        centerTitle: true,

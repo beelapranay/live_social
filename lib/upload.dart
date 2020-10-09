@@ -18,6 +18,8 @@ class Upload extends StatefulWidget {
 class _UploadState extends State<Upload> {
 
   final ImagePicker _picker = ImagePicker();
+  Map likes;
+  int likecount;
   bool isloading = false;
   File file;
   String postid = Uuid().v4();
@@ -117,6 +119,7 @@ class _UploadState extends State<Upload> {
     setState(() {
       file == null;
       isloading == false;
+      postid = Uuid().v4();
     });
     Navigator.pop(context);
   }
@@ -139,16 +142,30 @@ class _UploadState extends State<Upload> {
   }
 
   postintofirestore(String mediaurl, String caption){
+//    FirebaseFirestore.instance
+//        .collection('Posts').
+//        doc(FirebaseAuth.instance.currentUser.uid).
+//        collection('userPosts').
+//        doc(postid).
+//        set({
+//      "postID": postid,
+//      "userID": FirebaseAuth.instance.currentUser.uid,
+//      "userName": dispname,
+//      "image": mediaurl,
+//      "caption": caption,
+//      "timestamp": DateTime.now(),
+//      "likes": likes
+//    });
     FirebaseFirestore.instance
         .collection('Posts')
-        .add({
+        .doc(postid)
+        .set({
       'Name': dispname,
       'image' : mediaurl,
       'Caption': caption,
       'E-Mail': email,
       'user' : FirebaseAuth.instance.currentUser.photoURL,
-      'Timestamp': DateTime.now(),
-      //'image': imgurl
+      'Timestamp': DateTime.now()
     });
 
     FirebaseFirestore.instance
@@ -161,7 +178,7 @@ class _UploadState extends State<Upload> {
       'E-Mail': email,
       'user' : FirebaseAuth.instance.currentUser.photoURL,
       'Timestamp': DateTime.now(),
-      'image': mediaurl
+      'image': mediaurl,
     });
   }
 

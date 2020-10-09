@@ -117,6 +117,10 @@ class _UploadDPState extends State<UploadDP> {
     .collection('Users')
     .doc(FirebaseAuth.instance.currentUser.uid)
     .update({'url': mediaUrl});
+    FirebaseFirestore.instance
+        .collection('Posts')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .update({'user': mediaUrl});
     setState(() {
       // ignore: unnecessary_statements
       file == null;
