@@ -33,7 +33,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
           controller: _controller,
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index){
-              return MessageTile(
+            if(_controller.hasClients){
+              Timer(
+                Duration(seconds: 0),
+                    () => _controller.jumpTo(_controller.position.maxScrollExtent),
+              );
+            }
+              return
+                MessageTile(
                 message: snapshot.data.documents[index].data()["message"],
                 sendByMe: name == snapshot.data.documents[index].data()["sendBy"],
               )
