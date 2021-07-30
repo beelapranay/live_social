@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,28 +20,35 @@ class _UploadState extends State<Upload> {
 
   final ImagePicker _picker = ImagePicker();
   Map likes;
-  int likecount;
-  bool isloading = false;
+  int likeCount;
+  bool isLoading = false;
+  XFile xFile;
   File file;
-  String postid = Uuid().v4();
-  final StorageReference storageRef = FirebaseStorage.instance.ref();
-  TextEditingController captionc = new TextEditingController();
-  final String dispname = FirebaseAuth.instance.currentUser.displayName;
+  List<XFile> imageFileList;
+  set imageFile(XFile value) {
+    imageFileList = value == null ? null : [value];
+  }
+  String postId = Uuid().v4();
+  final storageRef = FirebaseStorage.instance.ref();
+  TextEditingController captionC = new TextEditingController();
+  final String displayName = FirebaseAuth.instance.currentUser.displayName;
   final String email = FirebaseAuth.instance.currentUser.email;
 
-  cameraphoto() async{
+  cameraPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.camera,maxHeight: 675,maxWidth: 960);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
     setState(() {
-      this.file=file;
+      xFile = pickedFile;
+      file = File(xFile.path);
     });
   }
 
-  galleryphoto() async{
+  galleryPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
     setState(() {
-      this.file=file;
+      xFile = pickedFile;
+      file = File(xFile.path);
     });
   }
 
@@ -64,11 +72,11 @@ class _UploadState extends State<Upload> {
             children: <Widget>[
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Camera',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: cameraphoto,
+                onPressed: cameraPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Gallery',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: galleryphoto,
+                onPressed: galleryPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Cancel',style: GoogleFonts.montserrat(fontSize: 18,color: Colors.red))),
@@ -110,23 +118,23 @@ class _UploadState extends State<Upload> {
 
   post() async{
     setState(() {
-      isloading = true;
+      isLoading = true;
     });
     await  compress();
     String mediaurl = await upload(file);
-    postintofirestore(mediaurl,captionc.text);
-    captionc.clear();
+    postintofirestore(mediaurl,captionC.text);
+    captionC.clear();
     setState(() {
       file == null;
-      isloading == false;
-      postid = Uuid().v4();
+      isLoading == false;
+      postId = Uuid().v4();
     });
     Navigator.pop(context);
   }
 
   Future<String> upload(imageFile) async {
-    StorageUploadTask uploadTask = storageRef.child("post_$postid.jpg").putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    final uploadTask = storageRef.child("post_$postId.jpg").putFile(imageFile);
+    final storageTaskSnapshot = await uploadTask.whenComplete(() => null);
     String url = await storageTaskSnapshot.ref.getDownloadURL();
     return url;
   }
@@ -135,7 +143,7 @@ class _UploadState extends State<Upload> {
     final tempdir = await getTemporaryDirectory();
     final path = tempdir.path;
     im.Image imagefile = im.decodeImage(file.readAsBytesSync());
-    final compressedimage = File('$path/img_$postid.jpg')..writeAsBytesSync(im.encodeJpg(imagefile,quality: 60));
+    final compressedimage = File('$path/img_$postId.jpg')..writeAsBytesSync(im.encodeJpg(imagefile,quality: 60));
     setState(() {
       file = compressedimage;
     });
@@ -146,11 +154,11 @@ class _UploadState extends State<Upload> {
 //        .collection('Posts').
 //        doc(FirebaseAuth.instance.currentUser.uid).
 //        collection('userPosts').
-//        doc(postid).
+//        doc(postId).
 //        set({
-//      "postID": postid,
+//      "postId": postId,
 //      "userID": FirebaseAuth.instance.currentUser.uid,
-//      "userName": dispname,
+//      "userName": displayName,
 //      "image": mediaurl,
 //      "caption": caption,
 //      "timestamp": DateTime.now(),
@@ -158,9 +166,9 @@ class _UploadState extends State<Upload> {
 //    });
     FirebaseFirestore.instance
         .collection('Posts')
-        .doc(postid)
+        .doc(postId)
         .set({
-      'Name': dispname,
+      'Name': displayName,
       'image' : mediaurl,
       'Caption': caption,
       'E-Mail': email,
@@ -192,13 +200,13 @@ class _UploadState extends State<Upload> {
         actions: <Widget>[
           FlatButton(
             child: Text('Post',style: GoogleFonts.montserrat(fontSize: 22,color: Colors.white),),
-            onPressed: isloading ? null : post,
+            onPressed: isLoading ? null : post,
           )
         ],
       ),
       body: ListView(
         children: <Widget>[
-          isloading ? LinearProgressIndicator(
+          isLoading ? LinearProgressIndicator(
               backgroundColor: Colors.white,valueColor: new AlwaysStoppedAnimation<Color>(Colors.red)
           ) : Container(height: 0,),
           Padding(
@@ -232,7 +240,7 @@ class _UploadState extends State<Upload> {
               width: 250,
               child: TextFormField(
                 cursorColor: Colors.red,
-                controller: captionc,
+                controller: captionC,
                 maxLines: null,
                 style: GoogleFonts.montserrat(fontSize: 18,),
                 decoration: InputDecoration(

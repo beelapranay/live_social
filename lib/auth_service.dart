@@ -73,7 +73,7 @@ class NameValidator {
 class EmailValidator {
   static String validate(String value) {
     Pattern pattern =
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@sret.edu.in+";
+        r"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$";
     RegExp regex = new RegExp(pattern);
     if(value.isEmpty){
       return 'Email is required.';

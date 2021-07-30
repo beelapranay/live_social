@@ -32,8 +32,8 @@ class _UsersPageState extends State<UsersPage> {
               return snapshot.hasData ? ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: (BuildContext context, int index) => users(context, snapshot.data.documents[index])
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (BuildContext context, int index) => users(context, snapshot.data.docs[index])
               ) : Center(child: Container(child: CircularProgressIndicator(backgroundColor: Colors.white,valueColor: new AlwaysStoppedAnimation<Color>(Colors.red))));
             }
         ),
@@ -51,23 +51,21 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Widget users(BuildContext context, DocumentSnapshot user) {
-    String url = user.data()['image'];
-    String caption = user.data()['Caption'];
-    String userUrl = user.data()['url'];
-    String name = user.data()['name'];
-    String myname = FirebaseAuth.instance.currentUser.displayName;
-    String docname = name+'_'+myname;
+    String userUrl = user.get('url');
+    String name = user.get('name');
+    String myName = FirebaseAuth.instance.currentUser.displayName;
+    String docName = name+'_'+myName;
     sendMessage(String userName){
-      List<String> users = [myname,userName];
+      List<String> users = [myName,userName];
 
-      String chatRoomId = docname;
+      String chatRoomId = docName;
 
       Map<String, dynamic> chatRoom = {
         "users": users,
         "chatRoomId" : chatRoomId,
       };
 
-      myname==name ? null : FirebaseFirestore.instance
+      myName==name ? null : FirebaseFirestore.instance
           .collection("chatRoom")
           .doc(chatRoomId)
           .set(chatRoom)
@@ -75,7 +73,7 @@ class _UsersPageState extends State<UsersPage> {
         print(e);
       });
 
-      myname==name ? print("Not Possible!!") : Navigator.push(context, MaterialPageRoute(
+      myName==name ? print("Not Possible!!") : Navigator.push(context, MaterialPageRoute(
           builder: (context) => ConversationScreen(
             chatRoomId: chatRoomId,name: name
           )

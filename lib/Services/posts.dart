@@ -75,8 +75,8 @@ class _PostsState extends State<Posts> {
                             return snapshot.hasData ? ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
-                                itemCount: snapshot.data.documents.length,
-                                itemBuilder: (BuildContext context, int index) => posts(context, snapshot.data.documents[index])
+                                itemCount: snapshot.data.docs.length,
+                                itemBuilder: (BuildContext context, int index) => posts(context, snapshot.data.docs[index])
                             ) : Center(child: Container(child: CircularProgressIndicator(backgroundColor: Colors.white,valueColor: new AlwaysStoppedAnimation<Color>(Colors.red))));
                           }
                       ),
@@ -95,8 +95,8 @@ class _PostsState extends State<Posts> {
                           return snapshot.hasData ?  ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (BuildContext context, int index) => userposts(context, snapshot.data.documents[index])
+                              itemCount: snapshot.data.docs.length,
+                              itemBuilder: (BuildContext context, int index) => userposts(context, snapshot.data.docs[index])
                           )
                           : Center(child: Container(child: CircularProgressIndicator(backgroundColor: Colors.white,valueColor: new AlwaysStoppedAnimation<Color>(Colors.red))));
                         }
@@ -129,10 +129,9 @@ class _PostsState extends State<Posts> {
 
 
 
-  Widget userposts(BuildContext context, DocumentSnapshot Order1) {
-    String url = Order1.data()['image'];
-    String caption = Order1.data()['Caption'];
-    String userurl = Order1.data()['user'];
+  Widget userposts(BuildContext context, DocumentSnapshot posts) {
+    String url = posts.get('image');
+    String caption = posts.get('Caption');
 
     return new Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
@@ -142,32 +141,27 @@ class _PostsState extends State<Posts> {
           child: Column(
             children: <Widget>[
 
-              Row(children: <Widget>[
-                Container(
-                  height: 60,width: 60,
-                  decoration: BoxDecoration(shape: BoxShape.circle,
-                      border: Border.all(width: 2,color: Colors.red),
-                      image: userurl==null ? null : DecorationImage(image: NetworkImage(userurl),
-                          fit: BoxFit.cover)
-                  ),
-                ),
-                SizedBox(width: 10,),
-                AutoSizeText('${Order1.data()['Name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
-
-              ]
-              ),
-              SizedBox(height: 10,),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Container(
-
-//                  child: AspectRatio(
-//                    aspectRatio: 16/9,
+                  child: url == null
+                      ? Container(
+                    height: 0,
+                  )
+                      : AspectRatio(
+                    aspectRatio: 10 / 9,
                     child: Container(
-                      child: url==null ? Container(height: 0,): Image.network(url),
+                      child:
+                      //url==null ? Container(height: 0,):
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            image: DecorationImage(
+                                image: NetworkImage(url),
+                                fit: BoxFit.cover)),
+                      ),
                     ),
-                 // ),
+                  ),
                 ),
               ),
               SizedBox(height: 5,),
@@ -192,11 +186,11 @@ class _PostsState extends State<Posts> {
                     ),
                   ),
                   SizedBox(height: 5,),
-                  Text('Posted By: ${Order1.data()['Name']}',style: GoogleFonts.poppins(fontWeight: FontWeight.w300,fontSize: 15)),
+                  Text('Posted By: ${posts.get('Name')}',style: GoogleFonts.poppins(fontWeight: FontWeight.w300,fontSize: 15)),
                   SizedBox(width: 5,),
-                  Text('Posted: ${timeago.format(Order1.data()['Timestamp'].toDate())}',style: GoogleFonts.montserrat(fontSize: 15)),
+                  Text('Posted: ${timeago.format(posts.get('Timestamp').toDate())}',style: GoogleFonts.montserrat(fontSize: 15)),
                   SizedBox(height: 5,),
-                  Text('E-Mail: ${Order1.data()['E-Mail']}',style: GoogleFonts.poppins(fontWeight: FontWeight.w400,fontSize: 15)),
+                  Text('E-Mail: ${posts.get('E-Mail')}',style: GoogleFonts.poppins(fontWeight: FontWeight.w400,fontSize: 15)),
                 ]),
               ),
             ],
@@ -206,13 +200,13 @@ class _PostsState extends State<Posts> {
     );
   }
 
-  Widget posts(BuildContext context, DocumentSnapshot Order) {
-    String url = Order.data()['image'];
-    String caption = Order.data()['Caption'];
-    String userUrl = Order.data()['user'];
+  Widget posts(BuildContext context, DocumentSnapshot posts) {
+    String url = posts.get('image');
+    String caption = posts.get('Caption');
+    String userUrl = posts.get('user');
     
-    Map likes = Order.data()['likes'];
-    int likecount = Order.data()['likecount'];
+    // Map likes = Order.data()['likes'];
+    // int likecount = Order.data()['likecount'];
 
 //    likePost(){
 //      bool isLiked = likes[FirebaseAuth.instance.currentUser.uid] == true;
@@ -235,35 +229,41 @@ class _PostsState extends State<Posts> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-              Row(children: <Widget>[
-                Container(
-                  height: 60,width: 60,
-                    decoration: BoxDecoration(shape: BoxShape.circle,
-                      border: Border.all(width: 2,color: Colors.red),
-                        image: userUrl == null ? DecorationImage(image: AssetImage('assets/user.png'),fit: BoxFit.cover)
-                            : DecorationImage(image: NetworkImage(userUrl),
-                            fit: BoxFit.cover)
-                    ),
-                ),
-                SizedBox(width: 10,),
-                AutoSizeText('${Order.data()['Name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
-              ]
-              ),
-              SizedBox(height: 10,),
+              // Row(children: <Widget>[
+              //   // Container(
+              //   //   height: 60,width: 60,
+              //   //     decoration: BoxDecoration(shape: BoxShape.circle,
+              //   //       border: Border.all(width: 2,color: Colors.red),
+              //   //         image: userUrl == null ? DecorationImage(image: AssetImage('assets/user.png'),fit: BoxFit.cover)
+              //   //             : DecorationImage(image: NetworkImage(userUrl),
+              //   //             fit: BoxFit.cover)
+              //   //     ),
+              //   // ),
+              //   SizedBox(width: 10,),
+              //   AutoSizeText('${posts.get('Name')}',style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold),),
+              // ]
+              // ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Container(
-                  child: GestureDetector(
-                    onDoubleTap: (){
-                      setState(() {
-                        isliked = true;
-                      });
-                    },
+                  child: url == null
+                      ? Container(
+                    height: 0,
+                  )
+                      : AspectRatio(
+                    aspectRatio: 10 / 9,
                     child: Container(
-                      child: url==null ? Container(height: 0,): Image.network(url),
+                      child:
+                      //url==null ? Container(height: 0,):
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            image: DecorationImage(
+                                image: NetworkImage(url),
+                                fit: BoxFit.cover)),
+                      ),
                     ),
                   ),
-                  // ),
                 ),
               ),
               SizedBox(height: 5,),
@@ -288,30 +288,30 @@ class _PostsState extends State<Posts> {
                     ),
                   ),
                   SizedBox(height: 5,),
-                  AutoSizeText('Posted By: ${Order.data()['Name']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                  AutoSizeText('Posted By: ${posts.get('Name')}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
                   SizedBox(width: 5,),
-                  AutoSizeText('Posted: ${timeago.format(Order.data()['Timestamp'].toDate())}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                  AutoSizeText('Posted: ${timeago.format(posts.get('Timestamp').toDate())}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
                   SizedBox(height: 5,),
-                  AutoSizeText('E-Mail: ${Order.data()['E-Mail']}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                  AutoSizeText('E-Mail: ${posts.get('E-Mail')}',style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
                   SizedBox(height: 5,),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: <Widget>[
-                        isliked==true ? IconButton(icon: Icon(Icons.favorite,color: Colors.red,), onPressed: (){
-                          setState(() {
-                            isliked = false;
-                          });
-                        }) : IconButton(icon: Icon(Icons.favorite_border,color: Colors.red), onPressed: (){
-                          setState(() {
-                            isliked = true;
-                          });
-                        }),
-                        IconButton(icon: Icon(Icons.chat), onPressed: (){}),
-                        IconButton(icon: Icon(Icons.send), onPressed: (){})
-                      ],
-                    )
-                  ),
+                  // Align(
+                  //   alignment: Alignment.centerLeft,
+                  //   child: Row(
+                  //     children: <Widget>[
+                  //       isliked==true ? IconButton(icon: Icon(Icons.favorite,color: Colors.red,), onPressed: (){
+                  //         setState(() {
+                  //           isliked = false;
+                  //         });
+                  //       }) : IconButton(icon: Icon(Icons.favorite_border,color: Colors.red), onPressed: (){
+                  //         setState(() {
+                  //           isliked = true;
+                  //         });
+                  //       }),
+                  //       IconButton(icon: Icon(Icons.chat), onPressed: (){}),
+                  //       IconButton(icon: Icon(Icons.send), onPressed: (){})
+                  //     ],
+                  //   )
+                  // ),
 
                 ]),
               ),

@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:clay_containers/widgets/clay_containers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -82,7 +81,7 @@ class _HomePageState extends State<HomePage> {
               new ListTile(
                 leading: Icon(
                   Icons.person,
-                  color: Colors.red, //Hexcolor('#004e92'),
+                  color: Colors.red, //HexColor('#004e92'),
                   size: 30,
                 ),
                 title: new Text('User Profile',
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
               new ListTile(
                   leading: Icon(
                     Icons.exit_to_app,
-                    color: Colors.red, //Hexcolor('#004e92'),
+                    color: Colors.red, //HexColor('#004e92'),
                     size: 30,
                   ),
                   title: new Text('Log Out',
@@ -163,21 +162,21 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            SizedBox(width: 10,),
+                            //SizedBox(width: 10,),
 
-                            OutlineButton(
-                              borderSide: BorderSide(color: Colors.red),
-                              highlightedBorderColor: Colors.red,
-                              onPressed: (){},
-                              //height: 30,
-                              child: Row(
-                                children: <Widget>[
-                                  Text('Doubts',style: GoogleFonts.montserrat(fontSize: 14),),
-                                  SizedBox(width: 5,),
-                                  Icon(Icons.book,size: 18,),
-                                ],
-                              ),
-                            ),
+                            // OutlineButton(
+                            //   borderSide: BorderSide(color: Colors.red),
+                            //   highlightedBorderColor: Colors.red,
+                            //   onPressed: (){},
+                            //   //height: 30,
+                            //   child: Row(
+                            //     children: <Widget>[
+                            //       Text('Doubts',style: GoogleFonts.montserrat(fontSize: 14),),
+                            //       SizedBox(width: 5,),
+                            //       Icon(Icons.book,size: 18,),
+                            //     ],
+                            //   ),
+                            // ),
 
                             SizedBox(width: 10,),
 
@@ -253,8 +252,8 @@ class _HomePageState extends State<HomePage> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               gradient: LinearGradient(colors: [
-                                Hexcolor('#E4181F'),
-                                Hexcolor('#E5E5BE')
+                                HexColor('#E4181F'),
+                                HexColor('#E5E5BE')
                               ]))),
                       SizedBox(
                         height: 20,

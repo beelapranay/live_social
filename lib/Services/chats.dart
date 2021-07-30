@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_x3/sharedpref.dart';
-import 'package:project_x3/sharedprefvalues.dart';
-import 'package:project_x3/users.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../users.dart';
 import 'conversationscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:project_x3/sharedprefvalues.dart';
 
 class ChatRoom extends StatefulWidget {
   @override
@@ -25,15 +21,15 @@ class _ChatRoomState extends State<ChatRoom> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data.docs.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return ChatRoomsTile(
-                userName: snapshot.data.documents[index].data()['chatRoomId']
+                userName: snapshot.data.docs[index].data()['chatRoomId']
                     .toString()
                     .replaceAll("_", "")
                     .replaceAll(name, ""),
-                chatRoomId: snapshot.data.documents[index].data()["chatRoomId"],
+                chatRoomId: snapshot.data.docs[index].data()["chatRoomId"],
               );
             })
             : Container(
@@ -74,10 +70,10 @@ class _ChatRoomState extends State<ChatRoom> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-//          Navigator.push(
-//              context,
-//              MaterialPageRoute(
-//                  builder: (context) => UsersPage()));
+         Navigator.push(
+             context,
+             MaterialPageRoute(
+                 builder: (context) => UsersPage()));
         },
         backgroundColor: Colors.red,
         child: Icon(Icons.chat,color: Colors.white,),
@@ -99,10 +95,6 @@ class ChatRoomsTile extends StatelessWidget {
   final String chatRoomId;
   String url;
 
-  getUrl() async {
-    SharedPrefValues.url = await SharedPref.getUrl();
-  }
-
   ChatRoomsTile({this.userName,@required this.chatRoomId});
 
 
@@ -110,6 +102,7 @@ class ChatRoomsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
+        print(userName);
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => ConversationScreen(
               chatRoomId: chatRoomId,
@@ -137,7 +130,7 @@ class ChatRoomsTile extends StatelessWidget {
                       SizedBox(width: 0,),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: AutoSizeText(userName,style: GoogleFonts.montserrat(fontSize: 15),maxFontSize: 15,),
+                        child: AutoSizeText(userName,style: GoogleFonts.montserrat(fontSize: 15, color: Colors.red),maxFontSize: 15,),
                       ),
                     ]
                 ),

@@ -31,7 +31,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       builder: (context, snapshot){
         return snapshot.hasData ?  ListView.builder(
           controller: _controller,
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index){
             if(_controller.hasClients){
               Timer(
@@ -41,8 +41,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
             }
               return
                 MessageTile(
-                message: snapshot.data.documents[index].data()["message"],
-                sendByMe: name == snapshot.data.documents[index].data()["sendBy"],
+                message: snapshot.data.docs[index].data()["message"],
+                sendByMe: name == snapshot.data.docs[index].data()["sendBy"],
               )
               ;
             }) : Container();

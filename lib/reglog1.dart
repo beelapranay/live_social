@@ -24,7 +24,6 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   AuthFormType authFormType;
-  bool _showAppleSignIn = false;
   bool isload = false;
 
   @override
@@ -118,7 +117,7 @@ class _SignUpViewState extends State<SignUpView> {
       return Scaffold(
         body: SingleChildScrollView(
           child: Container(
-            decoration: BoxDecoration(gradient: LinearGradient(colors: [Hexcolor('#222222'),Hexcolor('#666666')])),
+            decoration: BoxDecoration(gradient: LinearGradient(colors: [HexColor('#222222'),HexColor('#666666')])),
             //color: primaryColor,
             height: _height,
             width: _width,
@@ -226,10 +225,8 @@ class _SignUpViewState extends State<SignUpView> {
       textFields.add(SizedBox(height: 20));
     }
 
-    // add email & password
     if ([
       AuthFormType.signUp,
-      //AuthFormType.convert,
       AuthFormType.reset,
       AuthFormType.signIn
     ].contains(authFormType)) {
@@ -303,7 +300,7 @@ class _SignUpViewState extends State<SignUpView> {
         child: RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           color: Colors.white,
-          textColor: Hexcolor('#444444'),
+          textColor: HexColor('#444444'),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(

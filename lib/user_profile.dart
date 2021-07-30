@@ -24,22 +24,22 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   File file;
   String postid = Uuid().v4();
-  final StorageReference storageRef = FirebaseStorage.instance.ref();
+  final storageRef = FirebaseStorage.instance.ref();
   TextEditingController nedit = new TextEditingController();
 
   cameraPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.camera,maxHeight: 675,maxWidth: 960);
+    XFile file = await ImagePicker().pickImage(source: ImageSource.camera,maxHeight: 675,maxWidth: 960);
     setState(() {
-      this.file=file;
+      this.file=file as File;
     });
   }
 
   galleryPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    XFile file = await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
-      this.file=file;
+      this.file=file as File;
     });
   }
 
@@ -51,6 +51,9 @@ class _ProfileViewState extends State<ProfileView> {
   Future updateName(String name) async {
     await FirebaseAuth.instance.currentUser.updateProfile(displayName: name);
     await FirebaseAuth.instance.currentUser.reload();
+    await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser.uid).update({
+      "name": name
+    });
   }
 
   select(context){
@@ -133,7 +136,6 @@ class _ProfileViewState extends State<ProfileView> {
     final authData = snapshot.data;
     final String url = FirebaseAuth.instance.currentUser.photoURL;
 
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,119 +149,128 @@ class _ProfileViewState extends State<ProfileView> {
                     highlightedBorderColor: Colors.red,
                     child: Text('Upload DP',style: GoogleFonts.montserrat(fontSize: 18),),onPressed: (){
               Navigator.push(context,MaterialPageRoute(builder: (context) => UploadDP()));})
-                : Container(
-                  height: 120,width: 120,
-                  decoration: BoxDecoration(shape: BoxShape.circle,
-                      border: Border.all(width: 2,color: Colors.red),
-                      image: DecorationImage(image: NetworkImage(url),
-                          fit: BoxFit.cover)
-                  ),
+                : Column(
+                  children: [
+                    Container(
+                      height: 120,width: 120,
+                      decoration: BoxDecoration(shape: BoxShape.circle,
+                          border: Border.all(width: 2,color: Colors.red),
+                          image: DecorationImage(image: NetworkImage(url),
+                              fit: BoxFit.cover)
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+
+                    OutlineButton(
+                        borderSide: BorderSide(color: Colors.red),
+                        highlightedBorderColor: Colors.red,
+                        child: Text('Change DP',style: GoogleFonts.montserrat(fontSize: 18),),onPressed: (){
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => UploadDP()));})
+                  ],
                 )
             )
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
+          padding: const EdgeInsets.all(16.0),
+          child: AutoSizeText(
             "${authData.displayName ?? ''}",
             style: GoogleFonts.montserrat(fontSize: 20),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: AutoSizeText(
             "${authData.email ?? ''}",
             minFontSize: 16,
             style: GoogleFonts.montserrat(fontSize: 20),
           ),
         ),
-        Center(
-          child: RaisedButton(
-            color: Colors.red,
-            child: Text("Edit Profile",style: GoogleFonts.montserrat(fontSize: 18),),
-            onPressed: () {
-              _userEditBottomSheet(context);
-            },
-          ),
-        ),
-        Center(
-          child: Row(
-            children: <Widget>[
-              Text("Member from: ",
-                style: GoogleFonts.montserrat(fontSize: 20,color: Colors.red),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  "Member from: ${DateFormat('dd/MM/yyyy').format(authData.metadata.creationTime).toString()}",
+                  style: GoogleFonts.montserrat(fontSize: 20),
+                ),
               ),
-              Text(
-                "${DateFormat('dd/MM/yyyy').format(authData.metadata.creationTime).toString()}",
-                style: GoogleFonts.montserrat(fontSize: 20),
-              ),
-            ],
-          ),
-        ),
+        // Center(
+        //   child: RaisedButton(
+        //     color: Colors.red,
+        //     child: Text("Edit Profile",style: GoogleFonts.montserrat(fontSize: 18),),
+        //     onPressed: () {
+        //       _userEditBottomSheet(context);
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
 
 
 
-  void _userEditBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return Container(
-          height: MediaQuery.of(context).size.height * .60,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 15.0),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text("Update Profile"),
-                    Spacer(),
-                    IconButton(
-                      icon: Icon(Icons.cancel),
-                      color: Colors.orange,
-                      iconSize: 25,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: TextField(
-                          controller: nedit,
-                          decoration: InputDecoration(
-                            helperText: "Name",
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                      child: Text('Save'),
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      onPressed: () async {
-                        updateName(nedit.text);
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void _userEditBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext bc) {
+  //       return Container(
+  //         height: MediaQuery.of(context).size.height * .60,
+  //         child: Padding(
+  //           padding: const EdgeInsets.only(left: 15.0, top: 15.0),
+  //           child: Column(
+  //             children: <Widget>[
+  //               Row(
+  //                 children: <Widget>[
+  //                   Text("Update Profile", style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 16),),
+  //                   Spacer(),
+  //                   IconButton(
+  //                     icon: Icon(Icons.cancel),
+  //                     color: Colors.orange,
+  //                     iconSize: 25,
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ],
+  //               ),
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.only(right: 15.0),
+  //                       child: TextField(
+  //                         maxLines: null,
+  //                         style: GoogleFonts.montserrat(),
+  //                         controller: nedit,
+  //                         decoration: InputDecoration(
+  //                           helperText: "Name",
+  //                           helperStyle: GoogleFonts.montserrat()
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: <Widget>[
+  //                   RaisedButton(
+  //                     child: Text('Save'),
+  //                     color: Colors.green,
+  //                     textColor: Colors.white,
+  //                     onPressed: () async {
+  //                       updateName(nedit.text);
+  //                       Navigator.pop(context);
+  //                     },
+  //                   )
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 }

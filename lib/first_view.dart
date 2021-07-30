@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class FirstView extends StatelessWidget {
-  final primaryColor = Hexcolor('#444444');
+  final primaryColor = HexColor('#444444');
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,8 @@ class FirstView extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Hexcolor('#666666'),
-                  Hexcolor('#222222')
+                  HexColor('#666666'),
+                  HexColor('#222222')
                 ]
             ),
         ),

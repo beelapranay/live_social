@@ -23,27 +23,34 @@ class _confessionMakingState extends State<confessionMaking> {
   TextEditingController confessionController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
-  bool isloading = false;
+  bool isLoading = false;
   File file;
-  String postid = Uuid().v4();
-  final StorageReference storageRef = FirebaseStorage.instance.ref();
-  TextEditingController captionc = new TextEditingController();
-  final String dispname = FirebaseAuth.instance.currentUser.displayName;
+  XFile xFile;
+  List<XFile> imageFileList;
+  set imageFile(XFile value) {
+    imageFileList = value == null ? null : [value];
+  }
+  String postId = Uuid().v4();
+  final storageRef = FirebaseStorage.instance.ref();
+  TextEditingController captionC = new TextEditingController();
+  final String displayName = FirebaseAuth.instance.currentUser.displayName;
   final String email = FirebaseAuth.instance.currentUser.email;
 
-  cameraphoto() async{
+  cameraPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.camera,maxHeight: 675,maxWidth: 960);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
     setState(() {
-      this.file = file;
+      xFile = pickedFile;
+      file = File(xFile.path);
     });
   }
 
-  galleryphoto() async{
+  galleryPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
     setState(() {
-      this.file = file;
+      xFile = pickedFile;
+      file = File(xFile.path);
     });
   }
 
@@ -66,11 +73,11 @@ class _confessionMakingState extends State<confessionMaking> {
             children: <Widget>[
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Camera',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: cameraphoto,
+                onPressed: cameraPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Gallery',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: galleryphoto,
+                onPressed: galleryPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Cancel',style: GoogleFonts.montserrat(fontSize: 18,color: Colors.red))),
@@ -92,8 +99,8 @@ class _confessionMakingState extends State<confessionMaking> {
   }
 
   Future<String> upload(imageFile) async {
-    StorageUploadTask uploadTask = storageRef.child("post_$postid.jpg").putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    final uploadTask = storageRef.child("post_$postId.jpg").putFile(imageFile);
+    final storageTaskSnapshot = await uploadTask.whenComplete(() => null);
     String url = await storageTaskSnapshot.ref.getDownloadURL();
     return url;
   }
@@ -102,7 +109,7 @@ class _confessionMakingState extends State<confessionMaking> {
     final tempdir = await getTemporaryDirectory();
     final path = tempdir.path;
     im.Image imagefile = im.decodeImage(file.readAsBytesSync());
-    final compressedimage = File('$path/img_$postid.jpg')..writeAsBytesSync(im.encodeJpg(imagefile,quality: 60));
+    final compressedimage = File('$path/img_$postId.jpg')..writeAsBytesSync(im.encodeJpg(imagefile,quality: 80));
     setState(() {
       file = compressedimage;
     });
@@ -110,24 +117,24 @@ class _confessionMakingState extends State<confessionMaking> {
 
   post() async{
     setState(() {
-      isloading = true;
+      isLoading = true;
     });
-    if(file!=null) {
+    if(file != null) {
       await compress();
       String mediaUrl = await upload(file);
       FirebaseFirestore.instance
           .collection('Confessions')
           .add({
-        'url': mediaUrl,
         'title': titleController.text,
         'confession': confessionController.text,
-        'Timestamp': DateTime.now()
+        'Timestamp': DateTime.now(),
+        'url': mediaUrl
       });
       setState(() {
         // ignore: unnecessary_statements
         file == null;
         // ignore: unnecessary_statements
-        isloading == false;
+        isLoading == false;
       });
       Navigator.pop(context);
     }
@@ -137,7 +144,8 @@ class _confessionMakingState extends State<confessionMaking> {
           .add({
         'title': titleController.text,
         'confession': confessionController.text,
-        'Timestamp': DateTime.now()
+        'Timestamp': DateTime.now(),
+        'url': "null"
       });
       Navigator.of(context).pop();
     }
@@ -162,7 +170,7 @@ class _confessionMakingState extends State<confessionMaking> {
           actions: <Widget>[
             FlatButton(
               child: Text('Post',style: GoogleFonts.anonymousPro(fontSize: 20,color: Colors.white),),
-              onPressed: isloading ? null : post,
+              onPressed: isLoading ? null : post,
             )
           ],
         ),
@@ -171,7 +179,7 @@ class _confessionMakingState extends State<confessionMaking> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                isloading ? LinearProgressIndicator(backgroundColor: Colors.red,) : Container(height: 0,),
+                isLoading ? LinearProgressIndicator(backgroundColor: Colors.red,) : Container(height: 0,),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(

@@ -20,26 +20,34 @@ class _UploadDPState extends State<UploadDP> {
   final ImagePicker _picker = ImagePicker();
   bool isloading = false;
   File file;
+  String url;
+  XFile xFile;
+  List<XFile> imageFileList;
+  set imageFile(XFile value) {
+    imageFileList = value == null ? null : [value];
+  }
   String postid = Uuid().v4();
-  final StorageReference storageRef = FirebaseStorage.instance.ref();
+  final storageRef = FirebaseStorage.instance.ref();
   TextEditingController captionc = new TextEditingController();
   final String dispname = FirebaseAuth.instance.currentUser.displayName;
   final String email = FirebaseAuth.instance.currentUser.email;
 
-  cameraphoto() async{
+  cameraPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.camera,maxHeight: 675,maxWidth: 960);
-      setState(() {
-        this.file = file;
-      });
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
+    setState(() {
+      xFile = pickedFile;
+      file = File(xFile.path);
+    });
   }
 
-  galleryphoto() async{
+  galleryPhoto() async{
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
-      setState(() {
-        this.file = file;
-      });
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
+    setState(() {
+      xFile = pickedFile;
+      file = File(xFile.path);
+    });
   }
 
   select(context){
@@ -61,11 +69,11 @@ class _UploadDPState extends State<UploadDP> {
             children: <Widget>[
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Camera',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: cameraphoto,
+                onPressed: cameraPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Upload using Gallery',style: GoogleFonts.montserrat(fontSize: 18))),
-                onPressed: galleryphoto,
+                onPressed: galleryPhoto,
               ),
               SimpleDialogOption(
                 child: Center(child: Text('Cancel',style: GoogleFonts.montserrat(fontSize: 18,color: Colors.red))),
@@ -131,13 +139,14 @@ class _UploadDPState extends State<UploadDP> {
   }
 
   Future updateUserImage(String url) async {
-    await FirebaseAuth.instance.currentUser.updateProfile(photoURL: url);
+    await FirebaseAuth.instance.currentUser.updatePhotoURL(url);
     await FirebaseAuth.instance.currentUser.reload();
   }
 
   Future<String> upload(imageFile) async {
-    StorageUploadTask uploadTask = storageRef.child("post_$postid.jpg").putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    final uploadTask = storageRef.child("post_$postid.jpg").putFile(imageFile);
+    final storageTaskSnapshot = await uploadTask.whenComplete(() => null);
+
     String url = await storageTaskSnapshot.ref.getDownloadURL();
     return url;
   }
