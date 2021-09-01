@@ -1,4 +1,3 @@
-//import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   AuthFormType authFormType;
-  bool isload = false;
+  bool isLoad = false;
 
   @override
   void initState() {
@@ -65,7 +64,7 @@ class _SignUpViewState extends State<SignUpView> {
   void submit() async {
     if (validate()) {
       setState(() {
-        isload = true;
+        isLoad = true;
       });
       try {
         final auth = Provider.of(context).auth;
@@ -103,7 +102,7 @@ class _SignUpViewState extends State<SignUpView> {
         setState(() {
           _warning = e.message;
           setState(() {
-            isload = false;
+            isLoad = false;
           });
         });
       }
@@ -308,7 +307,7 @@ class _SignUpViewState extends State<SignUpView> {
               style: GoogleFonts.montserrat(fontSize: 20,fontWeight: FontWeight.w300),
             ),
           ),
-          onPressed: isload ? null : submit,
+          onPressed: isLoad ? null : submit,
         ),
       ),
       showForgotPassword(_showForgotPassword),
